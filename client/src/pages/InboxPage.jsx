@@ -63,8 +63,14 @@ const InboxPage = () => {
         </section>
 
         <section className="inbox-detail-pane">
-          <div className="empty-illustration">
-            <span />
+          <div className="inbox-brand-logo">
+            <svg width="52" height="52" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-accent)" }}>
+              <circle cx="11" cy="11" r="10" />
+              <circle cx="11" cy="11" r="3" />
+              <line x1="11" y1="1" x2="11" y2="8" />
+              <line x1="11" y1="14" x2="11" y2="21" />
+            </svg>
+            <span className="inbox-brand-name">IssueTracker</span>
           </div>
           <h2>{issues.length ? "Select an issue" : "All caught up"}</h2>
           <p>{issues.length ? "Open an item from the left to review it." : "Issues assigned to you will appear here."}</p>

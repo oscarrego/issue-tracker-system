@@ -1,5 +1,12 @@
 import { LABEL_OPTIONS } from "../utils/issueOptions";
 
+const UPPERCASE_LABELS = new Set(["ui", "api", "ux"]);
+const formatLabel = (label) => {
+  const lower = label.toLowerCase();
+  if (UPPERCASE_LABELS.has(lower)) return lower.toUpperCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+};
+
 const LabelPicker = ({ selected, onChange }) => {
   const toggle = (label) => {
     if (selected.includes(label)) {
@@ -25,7 +32,7 @@ const LabelPicker = ({ selected, onChange }) => {
                 <polyline points="1,6 4,9 11,2" />
               </svg>
             )}
-            {label}
+            {formatLabel(label)}
           </button>
         );
       })}

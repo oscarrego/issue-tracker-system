@@ -11,6 +11,14 @@ import { LABEL_OPTIONS, PRIORITIES, isOverdue } from "../utils/issueOptions";
 import api from "../api/axios";
 import { useData } from "../context/DataContext";
 
+const UPPERCASE_LABELS = new Set(["ui", "api", "ux"]);
+const formatLabel = (label) => {
+  const lower = label.toLowerCase();
+  if (UPPERCASE_LABELS.has(lower)) return lower.toUpperCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+};
+
+
 const formatDate = (dateStr) => {
   if (!dateStr) return "—";
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -148,7 +156,7 @@ const IssuesPage = () => {
           onChange={(e) => setLabelFilter(e.target.value)}
         >
           <option value="">All labels</option>
-          {LABEL_OPTIONS.map((label) => <option key={label} value={label}>{label}</option>)}
+          {LABEL_OPTIONS.map((label) => <option key={label} value={label}>{formatLabel(label)}</option>)}
         </select>
         <select
           className="form-select filter-select"
@@ -185,14 +193,13 @@ const IssuesPage = () => {
                   <th>Labels</th>
                   <th>Due</th>
                   <th>Assigned To</th>
-                  <th>Created</th>
-                  <th style={{ textAlign: "right" }}>Actions</th>
+                  <th style={{ textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {issues.length === 0 ? (
                   <tr>
-                    <td colSpan={8}>
+                    <td colSpan={7}>
                       <div className="table-empty">
                         <svg width="36" height="36" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="8" cy="8" r="7" />
@@ -220,7 +227,7 @@ const IssuesPage = () => {
                           {issue.title}
                         </Link>
                         <div className="table-meta">
-                          #{issue._id.slice(-6)} · by {issue.createdBy?.name || "Unknown"}
+                          {formatDate(issue.createdAt)} · by {issue.createdBy?.name || "Unknown"}
                         </div>
                       </td>
                       <td>
@@ -243,11 +250,8 @@ const IssuesPage = () => {
                           </span>
                         ) : "Unassigned"}
                       </td>
-                      <td style={{ fontSize: "13px", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
-                        {formatDate(issue.createdAt)}
-                      </td>
                       <td>
-                        <div className="table-actions" style={{ justifyContent: "flex-end" }}>
+                        <div className="table-actions" style={{ justifyContent: "center" }}>
                           <button
                             className="btn btn-ghost btn-sm"
                             onClick={() => navigate(`/issues/${issue._id}`)}

@@ -18,6 +18,12 @@ const sidebarDefaults = {
   github: true,
 };
 
+// Try items that can be dismissed with X
+const TRY_ITEMS = [
+  { key: "invite", label: "Invite people" },
+  { key: "github", label: "Connect GitHub" },
+];
+
 const sidebarGroups = [
   {
     title: "Personal",
@@ -65,18 +71,54 @@ const Sidebar = () => {
   const [customizeOpen, setCustomizeOpen] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
   const [githubStatus, setGithubStatus] = useState("");
+  const menuRef = useRef(null);
+  const moreRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // ── Sidebar visibility (for More > Customize sidebar) ──────────
   const [visibleItems, setVisibleItems] = useState(() => {
     const stored = localStorage.getItem("sidebar_visibility");
     return stored ? { ...sidebarDefaults, ...JSON.parse(stored) } : sidebarDefaults;
   });
-  const menuRef = useRef(null);
-  const moreRef = useRef(null);
-  const fileInputRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem("sidebar_visibility", JSON.stringify(visibleItems));
   }, [visibleItems]);
 
+  // ── Per-user Try dismiss state ──────────────────────────────────
+  const tryDismissKey = user?.id ? `try_dismissed_${user.id}` : null;
+
+  const [dismissedTry, setDismissedTry] = useState(() => {
+    if (!user?.id) return {};
+    const stored = localStorage.getItem(`try_dismissed_${user.id}`);
+    return stored ? JSON.parse(stored) : {};
+  });
+
+  // Sync dismissedTry when user loads
+  useEffect(() => {
+    if (!user?.id) return;
+    const stored = localStorage.getItem(`try_dismissed_${user.id}`);
+    setDismissedTry(stored ? JSON.parse(stored) : {});
+  }, [user?.id]);
+
+  const dismissTryItem = (key) => {
+    const next = { ...dismissedTry, [key]: true };
+    setDismissedTry(next);
+    if (tryDismissKey) localStorage.setItem(tryDismissKey, JSON.stringify(next));
+  };
+
+  const restoreTryItem = (key) => {
+    const next = { ...dismissedTry, [key]: false };
+    setDismissedTry(next);
+    if (tryDismissKey) localStorage.setItem(tryDismissKey, JSON.stringify(next));
+  };
+
+  // True if all Try items are dismissed
+  const allTryDismissed = TRY_ITEMS.every(
+    ({ key }) => dismissedTry[key] || !visibleItems[key]
+  );
+
+  // ── Close on outside click ──────────────────────────────────────
   useEffect(() => {
     const handle = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) setMenuOpen(false);
@@ -86,6 +128,7 @@ const Sidebar = () => {
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
+  // ── Profile photo ───────────────────────────────────────────────
   const savePhoto = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -123,6 +166,7 @@ const Sidebar = () => {
     setVisibleItems((current) => ({ ...current, [key]: !current[key] }));
   };
 
+  // ── Name editing ────────────────────────────────────────────────
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [nameSaving, setNameSaving] = useState(false);
@@ -133,7 +177,6 @@ const Sidebar = () => {
     setNameValue(user?.name || "");
     setNameError("");
     setEditingName(true);
-    // Focus input on next tick after render
     setTimeout(() => nameInputRef.current?.focus(), 0);
   };
 
@@ -306,7 +349,6 @@ const Sidebar = () => {
               <button type="button" onClick={() => { navigate("/members"); setMoreOpen(false); }}>
                 {Icons.members} Members
               </button>
-             
               <button type="button" onClick={() => { setCustomizeOpen(true); setMoreOpen(false); }}>
                 {Icons.settings} Customize sidebar
               </button>
@@ -314,27 +356,59 @@ const Sidebar = () => {
           )}
         </div>
 
-        <button className="sidebar-section-toggle" type="button" onClick={() => setTryOpen((value) => !value)}>
-          <span>Try</span>
-          {tryOpen ? Icons.chevronDown : Icons.chevronRight}
-        </button>
-        {tryOpen && (
+        {/* ── Try section ── only shown if not all dismissed ──────── */}
+        {!allTryDismissed && (
           <>
-            {visibleItems.invite && (
-              <button className="sidebar-link" type="button" onClick={() => setInviteOpen(true)}>
-                {Icons.invite} Invite people
-              </button>
+            <button className="sidebar-section-toggle" type="button" onClick={() => setTryOpen((value) => !value)}>
+              <span>Try</span>
+              {tryOpen ? Icons.chevronDown : Icons.chevronRight}
+            </button>
+            {tryOpen && (
+              <>
+                {visibleItems.invite && !dismissedTry.invite && (
+                  <div className="sidebar-link-row">
+                    <button className="sidebar-link" type="button" onClick={() => setInviteOpen(true)}>
+                      {Icons.invite} Invite people
+                    </button>
+                    <button
+                      className="try-dismiss-btn"
+                      type="button"
+                      title="Dismiss"
+                      onClick={() => dismissTryItem("invite")}
+                    >
+                      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                        <line x1="3" y1="3" x2="13" y2="13" />
+                        <line x1="13" y1="3" x2="3" y2="13" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                {visibleItems.github && !dismissedTry.github && (
+                  <div className="sidebar-link-row">
+                    <button className="sidebar-link" type="button" onClick={connectGithub}>
+                      {Icons.github} Connect GitHub
+                    </button>
+                    <button
+                      className="try-dismiss-btn"
+                      type="button"
+                      title="Dismiss"
+                      onClick={() => dismissTryItem("github")}
+                    >
+                      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                        <line x1="3" y1="3" x2="13" y2="13" />
+                        <line x1="13" y1="3" x2="3" y2="13" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                {githubStatus && <div className="sidebar-note">{githubStatus}</div>}
+              </>
             )}
-            {visibleItems.github && (
-              <button className="sidebar-link" type="button" onClick={connectGithub}>
-                {Icons.github} Connect GitHub
-              </button>
-            )}
-            {githubStatus && <div className="sidebar-note">{githubStatus}</div>}
           </>
         )}
       </nav>
 
+      {/* ── Customize sidebar modal ─────────────────────────────── */}
       {customizeOpen && (
         <div className="modal-overlay" role="presentation" onMouseDown={() => setCustomizeOpen(false)}>
           <div className="modal customize-modal" role="dialog" aria-modal="true" onMouseDown={(e) => e.stopPropagation()}>
@@ -359,6 +433,26 @@ const Sidebar = () => {
                 </div>
               </div>
             ))}
+
+            {/* Dismissed Try items — restore section */}
+            {TRY_ITEMS.some(({ key }) => dismissedTry[key]) && (
+              <div className="customize-group">
+                <h3>Dismissed "Try" items</h3>
+                <div className="customize-list">
+                  {TRY_ITEMS.filter(({ key }) => dismissedTry[key]).map(({ key, label }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className="customize-row"
+                      onClick={() => restoreTryItem(key)}
+                    >
+                      <span>{label}</span>
+                      <em className="customize-pill hidden">Hidden</em>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

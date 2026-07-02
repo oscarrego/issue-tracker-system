@@ -1128,7 +1128,338 @@ input, textarea, select { font-family: inherit; }
   font-size: 13px;
 }
 
-/* ─── Issue Form ──────────────────────────────────────────────── */
+
+/* ─── Create Issue — Notion-style layout ─────────────────────── */
+.ci-shell {
+  display: flex;
+  flex-direction: column;
+  /* Escape page-container padding (42px top/bottom, 52px left/right) */
+  margin: -42px -52px;
+  /* Fit exactly inside the page-container frame: min-height matches page-container */
+  height: calc(100vh - var(--topnav-height) - 46px - 2px);
+  /* No own background — let the page-container's #121213 show through */
+  background: transparent;
+  /* Clip children to the page-container's 12px rounded corners */
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.ci-topbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px;
+  height: 44px;
+  border-bottom: 1px solid #222226;
+  flex-shrink: 0;
+}
+
+.ci-topbar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  text-decoration: none;
+  transition: color 0.1s;
+  flex-shrink: 0;
+}
+
+.ci-topbar-back:hover {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.ci-topbar-sep {
+  color: #38383f;
+  font-size: 14px;
+  user-select: none;
+}
+
+.ci-topbar-crumb {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.ci-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.ci-topbar-error {
+  font-size: 12px;
+  color: var(--color-danger);
+}
+
+.ci-body {
+  display: grid;
+  grid-template-columns: 1fr 264px;
+  /* flex: 1 + height: 0 forces the grid to fill remaining flex space */
+  flex: 1;
+  height: 0;
+  min-height: 0;
+}
+
+.ci-main {
+  padding: 32px 40px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.ci-title-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  padding: 0;
+  margin-bottom: 16px;
+  caret-color: var(--color-accent);
+  line-height: 1.25;
+}
+
+.ci-title-input::placeholder {
+  color: #3a3a44;
+}
+
+.ci-desc-input {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-text-muted);
+  padding: 0;
+  min-height: 160px;
+  caret-color: var(--color-accent);
+}
+
+.ci-desc-input::placeholder {
+  color: #3a3a44;
+}
+
+/* ── Right sidebar ─────────────────────────────────────────────── */
+.ci-sidebar {
+  border-left: 1px solid #222226;
+  padding: 20px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.ci-sidebar-heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #55555f;
+  margin-bottom: 10px;
+}
+
+.ci-prop-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  transition: background 0.12s;
+  min-height: 34px;
+  cursor: pointer;
+}
+
+.ci-prop-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.ci-prop-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #66666f;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.ci-prop-label svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.ci-prop-value {
+  flex: 1;
+  min-width: 0;
+}
+
+.ci-prop-select {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 2px 20px 2px 0;
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: dark;
+  /* Subtle chevron arrow via background SVG */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 16 16' fill='none' stroke='%2366666f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='4,6 8,10 12,6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  background-size: 10px;
+}
+
+.ci-prop-select option {
+  background: #1e1e22;
+  color: var(--color-text);
+}
+
+/* ── Custom property dropdowns (profile-menu style) ──── */
+.ci-dropdown-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.ci-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 0;
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.1s;
+}
+
+.ci-dropdown-trigger:hover {
+  color: var(--color-accent);
+}
+
+.ci-dropdown-trigger svg {
+  flex-shrink: 0;
+  color: #55555f;
+  margin-left: auto;
+}
+
+.ci-dropdown-menu {
+  position: absolute;
+  left: -8px;
+  top: calc(100% + 6px);
+  min-width: 180px;
+  padding: 5px;
+  background: #1b1b1e;
+  border: 1px solid #303036;
+  border-radius: 10px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+  z-index: 800;
+}
+
+.ci-dropdown-item {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #d4d4da;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 450;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.ci-dropdown-item:hover {
+  background: #2a2a2e;
+  color: #ffffff;
+}
+
+.ci-dropdown-item.selected {
+  color: #ffffff;
+}
+
+.ci-dropdown-item.selected::after {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+
+.ci-prop-date {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 13px;
+  color: var(--color-text);
+  padding: 2px 0;
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+/* Labels sub-section */
+.ci-labels-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #2a2a2f;
+}
+
+.ci-labels-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #55555f;
+  margin-bottom: 10px;
+}
+
+.ci-labels-heading svg {
+  opacity: 0.7;
+}
+
+/* Override label-picker inside sidebar */
+.ci-sidebar .label-picker {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  gap: 5px;
+  min-height: unset;
+}
+
+/* Keep old issue-form-card for EditIssuePage which still uses it */
 .issue-form-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1145,6 +1476,7 @@ input, textarea, select { font-family: inherit; }
   border-top: 1px solid var(--color-border-subtle);
   margin-top: var(--space-2);
 }
+
 
 /* ─── Loading ─────────────────────────────────────────────────── */
 .spinner-overlay {
@@ -1461,6 +1793,8 @@ body {
   border-radius: 50%;
   object-fit: cover;
   display: block;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
   border: 1px solid rgba(255,255,255,0.12);
 }
 
@@ -1578,18 +1912,20 @@ body {
 
 .sidebar-section-toggle {
   width: 100%;
-  height: 30px;
+  height: 26px;
   padding: 0 12px;
-  margin-top: 12px;
+  margin-top: 18px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 6px;
   background: transparent;
-  color: #8d8d97;
+  color: #72727c;
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 13px;
+  gap: 4px;
+  font-size: 11px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   text-align: left;
 }
 
@@ -1598,7 +1934,7 @@ body {
 }
 
 .sidebar-section-toggle:hover {
-  color: #d9d9df;
+  color: #c8c8d0;
   background: #171719;
 }
 
@@ -1828,6 +2164,22 @@ body {
   border-right-color: transparent;
 }
 
+.inbox-brand-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.inbox-brand-name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--color-text);
+}
+
 .compact-list,
 .linear-list {
   display: flex;
@@ -1934,6 +2286,218 @@ body {
 
 .invite-modal {
   max-width: 480px;
+}
+
+/* ─── Notion-style New Project modal ─────────────────────────── */
+.project-notion-modal {
+  max-width: 680px;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.project-notion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid #26262b;
+}
+
+.project-notion-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.project-notion-breadcrumb svg {
+  opacity: 0.5;
+}
+
+.project-notion-breadcrumb span:last-child {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.project-notion-close {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.project-notion-close:hover {
+  background: #26262b;
+  color: var(--color-text);
+}
+
+.project-notion-body {
+  padding: 24px 28px 20px;
+}
+
+.project-notion-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #26262b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--color-text-muted);
+}
+
+.project-notion-name {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  padding: 0;
+  margin-bottom: 8px;
+  caret-color: var(--color-accent);
+}
+
+.project-notion-name::placeholder {
+  color: #4a4a54;
+}
+
+.project-notion-summary {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  padding: 0;
+  margin-bottom: 16px;
+  caret-color: var(--color-accent);
+}
+
+.project-notion-summary::placeholder {
+  color: #4a4a54;
+}
+
+.project-notion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #26262b;
+}
+
+.project-notion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: #26262b;
+  border: 0;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.project-notion-chip svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.project-notion-chip:hover {
+  background: #303038;
+  color: var(--color-text);
+}
+
+.project-notion-chip.selected {
+  background: #2d3a5a;
+  color: #8faeff;
+}
+
+.project-notion-chip.selected svg {
+  opacity: 1;
+}
+
+.project-notion-desc {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  resize: none;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  min-height: 120px;
+  padding: 0;
+  caret-color: var(--color-accent);
+}
+
+.project-notion-desc::placeholder {
+  color: #3e3e48;
+}
+
+.project-notion-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid #26262b;
+}
+
+/* ─── Try section dismiss button ─────────────────────────────── */
+.sidebar-link-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  border-radius: 8px;
+}
+
+.sidebar-link-row:hover .try-dismiss-btn {
+  opacity: 1;
+}
+
+.sidebar-link-row .sidebar-link {
+  flex: 1;
+  border-radius: 8px;
+}
+
+.try-dismiss-btn {
+  opacity: 0;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #72727c;
+  cursor: pointer;
+  margin-right: 4px;
+  transition: opacity 0.12s, background 0.12s, color 0.12s;
+}
+
+.try-dismiss-btn:hover {
+  background: #2a2a30;
+  color: var(--color-text);
 }
 
 .filter-search.wide {
@@ -2095,6 +2659,20 @@ body {
 .project-card-foot small {
   color: var(--color-text-muted);
   font-size: 12px;
+}
+
+/* button group inside the card footer */
+.project-card-foot > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ensure btn icons in card are vertically centered */
+.project-card-foot .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .toast {

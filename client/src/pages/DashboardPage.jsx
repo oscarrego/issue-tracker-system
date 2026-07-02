@@ -16,11 +16,10 @@ const formatDate = (dateStr) => {
   });
 };
 
-const StatCard = ({ label, value, type, icon }) => (
+const StatCard = ({ label, value }) => (
   <div className="stat-card">
     <div className="stat-card-header">
       <span className="stat-card-label">{label}</span>
-      <div className={`stat-card-icon ${type}`}>{icon}</div>
     </div>
     <div className="stat-card-value">{value ?? "—"}</div>
     <div className="stat-card-meta">All time</div>
@@ -81,52 +80,10 @@ const DashboardPage = () => {
       )}
 
       <div className="stats-grid">
-        <StatCard
-          label="Total Issues"
-          value={data?.stats?.total}
-          type="total"
-          icon={
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="5" height="5" rx="0.5" />
-              <rect x="9" y="2" width="5" height="5" rx="0.5" />
-              <rect x="2" y="9" width="5" height="5" rx="0.5" />
-              <rect x="9" y="9" width="5" height="5" rx="0.5" />
-            </svg>
-          }
-        />
-        <StatCard
-          label="Open"
-          value={data?.stats?.open}
-          type="open"
-          icon={
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="8" cy="8" r="7" />
-              <circle cx="8" cy="8" r="2.5" />
-            </svg>
-          }
-        />
-        <StatCard
-          label="In Progress"
-          value={data?.stats?.inProgress}
-          type="progress"
-          icon={
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="8" cy="8" r="7" />
-              <path d="M8 4v4l3 2" />
-            </svg>
-          }
-        />
-        <StatCard
-          label="Closed"
-          value={data?.stats?.closed}
-          type="closed"
-          icon={
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="8" cy="8" r="7" />
-              <polyline points="5,8 7,10 11,6" />
-            </svg>
-          }
-        />
+        <StatCard label="Total Issues" value={data?.stats?.total} />
+        <StatCard label="Open"         value={data?.stats?.open} />
+        <StatCard label="In Progress"  value={data?.stats?.inProgress} />
+        <StatCard label="Closed"       value={data?.stats?.closed} />
       </div>
 
       <div className="card">

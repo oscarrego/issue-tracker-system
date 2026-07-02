@@ -12,7 +12,7 @@ const Avatar = ({ user, src, size = 26, className = "" }) => {
         className={`avatar-img ${className}`.trim()}
         src={imageSrc}
         alt=""
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, minWidth: size, minHeight: size }}
       />
     );
   }

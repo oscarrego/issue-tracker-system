@@ -10,6 +10,55 @@ import { useData } from "../context/DataContext";
 
 const emptyForm = { name: "", description: "", status: "Planning" };
 
+const STATUS_CHIPS = [
+  {
+    value: "Planning",
+    icon: (
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="3" width="12" height="11" rx="2"/>
+        <path d="M5 1v4M11 1v4M2 7h12"/>
+      </svg>
+    ),
+  },
+  {
+    value: "In Progress",
+    icon: (
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M8 5v3l2 2"/>
+      </svg>
+    ),
+  },
+  {
+    value: "On Hold",
+    icon: (
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3" width="3" height="10" rx="1"/>
+        <rect x="9" y="3" width="3" height="10" rx="1"/>
+      </svg>
+    ),
+  },
+  {
+    value: "Completed",
+    icon: (
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="8" cy="8" r="6"/>
+        <polyline points="5,8 7,10 11,6"/>
+      </svg>
+    ),
+  },
+  {
+    value: "Cancelled",
+    icon: (
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="8" cy="8" r="6"/>
+        <line x1="5" y1="5" x2="11" y2="11"/>
+        <line x1="11" y1="5" x2="5" y2="11"/>
+      </svg>
+    ),
+  },
+];
+
 const ProjectModal = ({ project, onClose, onSaved }) => {
   const [form, setForm] = useState(project || emptyForm);
   const [saving, setSaving] = useState(false);
@@ -32,33 +81,96 @@ const ProjectModal = ({ project, onClose, onSaved }) => {
 
   return (
     <div className="modal-overlay" role="presentation" onMouseDown={onClose}>
-      <div className="modal invite-modal" role="dialog" aria-modal="true" onMouseDown={(e) => e.stopPropagation()}>
-        <h2 className="modal-title">{project?._id ? "Edit project" : "New project"}</h2>
-        {error && <div className="alert alert-error">{error}</div>}
+      <div className="modal project-notion-modal" role="dialog" aria-modal="true" onMouseDown={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="project-notion-header">
+          <div className="project-notion-breadcrumb">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 3h12M2 8h12M2 13h12" />
+            </svg>
+            <span>Projects</span>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6,3 10,8 6,13" />
+            </svg>
+            <span>{project?._id ? "Edit project" : "New project"}</span>
+          </div>
+          <button className="project-notion-close" type="button" onClick={onClose} aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="3" x2="13" y2="13" />
+              <line x1="13" y1="3" x2="3" y2="13" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Body */}
         <form onSubmit={save}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="project-name">Project Name</label>
-            <input id="project-name" className="form-input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoFocus />
+          <div className="project-notion-body">
+            {/* Project icon */}
+            <div className="project-notion-icon">
+              <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="1" y="3" width="14" height="10" rx="2" />
+                <path d="M4 6h8M4 9h5" />
+              </svg>
+            </div>
+
+            {/* Name */}
+            <input
+              id="project-name"
+              className="project-notion-name"
+              value={form.name}
+              onChange={(e) => { setForm({ ...form, name: e.target.value }); setError(""); }}
+              placeholder="Project name"
+              autoFocus
+            />
+
+            {/* Summary */}
+            <input
+              className="project-notion-summary"
+              value={form.summary || ""}
+              onChange={(e) => setForm({ ...form, summary: e.target.value })}
+              placeholder="Add a short summary..."
+            />
+
+            {error && <div className="alert alert-error" style={{ marginBottom: 12 }}>{error}</div>}
+
+            {/* Status chips */}
+            <div className="project-notion-chips">
+              {STATUS_CHIPS.map((chip) => (
+                <button
+                  key={chip.value}
+                  type="button"
+                  className={`project-notion-chip${form.status === chip.value ? " selected" : ""}`}
+                  onClick={() => setForm({ ...form, status: chip.value })}
+                >
+                  {chip.icon}
+                  {chip.value}
+                </button>
+              ))}
+            </div>
+
+            {/* Description */}
+            <textarea
+              id="project-description"
+              className="project-notion-desc"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              placeholder="Write a description, a project brief, or collect ideas..."
+            />
           </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="project-description">Description</label>
-            <textarea id="project-description" className="form-textarea" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} />
-          </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="project-status">Status</label>
-            <select id="project-status" className="form-select" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-              {PROJECT_STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
-            </select>
-          </div>
-          <div className="modal-actions">
+
+          {/* Footer */}
+          <div className="project-notion-footer">
             <button className="btn btn-secondary" type="button" onClick={onClose}>Cancel</button>
-            <button className="btn btn-primary" type="submit" disabled={saving}>{saving ? "Saving..." : "Save project"}</button>
+            <button className="btn btn-primary" type="submit" disabled={saving}>
+              {saving ? "Saving..." : (project?._id ? "Save changes" : "Create project")}
+            </button>
           </div>
         </form>
       </div>
     </div>
   );
 };
+
 
 const ProjectsPage = () => {
   const { cache, setCacheValue } = useData();
@@ -137,8 +249,26 @@ const ProjectsPage = () => {
               <div className="project-card-foot">
                 <small>Created {formatDate(project.createdAt)}</small>
                 <span>
-                  <button className="btn btn-ghost btn-sm" type="button" onClick={() => { setModalProject(project); setModalOpen(true); }}>Edit</button>
-                  <button className="btn btn-ghost-danger btn-sm" type="button" onClick={() => setDeleteTarget(project)}>Delete</button>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    type="button"
+                    onClick={() => { setModalProject(project); setModalOpen(true); }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11.5 2.5a2.121 2.121 0 0 1 3 3L5 15H2v-3L11.5 2.5z"/>
+                    </svg>
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    type="button"
+                    onClick={() => setDeleteTarget(project)}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3,4 13,4"/><path d="M5 4V3h6v1"/><path d="M6 7v5M10 7v5"/><rect x="2" y="4" width="12" height="10" rx="2"/>
+                    </svg>
+                    Delete
+                  </button>
                 </span>
               </div>
             </div>

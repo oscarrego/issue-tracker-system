@@ -1,15 +1,15 @@
 export const PRIORITIES = ["Low", "Medium", "High", "Urgent"];
 
 export const LABEL_OPTIONS = [
-  "bug",
-  "feature",
-  "ui",
-  "backend",
-  "frontend",
-  "documentation",
-  "enhancement",
-  "api",
-  "database",
+  "Bug",
+  "Feature",
+  "UI",
+  "Backend",
+  "Frontend",
+  "Documentation",
+  "Enhancement",
+  "API",
+  "Database",
 ];
 
 export const STATUSES = ["Open", "In Progress", "Closed"];
