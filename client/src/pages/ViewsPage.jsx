@@ -108,7 +108,18 @@ const ViewsPage = () => {
       <Toast message={toast} onClose={() => setToast("")} />
       <div className="page-header"><div className="page-header-left"><h1 className="page-title">Views</h1><p className="page-subtitle">Saved issue filters for focused work.</p></div><button className="btn btn-primary" type="button" onClick={() => { setModalView(null); setModalOpen(true); }}>Create View</button></div>
       {loading ? <LoadingSpinner /> : views.length === 0 ? (
-        <div className="quiet-state"><div className="empty-illustration"><span /></div><h2>No saved views yet.</h2><button className="btn btn-primary" type="button" onClick={() => setModalOpen(true)}>Create View</button></div>
+        <div className="quiet-state">
+          <div style={{ marginTop: "80px", marginBottom: "12px", display: "flex", justifyContent: "center" }}>
+            <svg width="96" height="96" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-accent)", opacity: 0.9 }}>
+              <circle cx="11" cy="11" r="10" />
+              <circle cx="11" cy="11" r="3" />
+              <line x1="11" y1="1" x2="11" y2="8" />
+              <line x1="11" y1="14" x2="11" y2="21" />
+            </svg>
+          </div>
+          <h2>No saved views yet.</h2>
+          
+        </div>
       ) : (
         <div className="project-grid">
           {views.map((view) => (

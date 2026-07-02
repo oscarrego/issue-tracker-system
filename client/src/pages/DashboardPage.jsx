@@ -132,7 +132,7 @@ const DashboardPage = () => {
                       </div>
                     </td>
                     <td>
-                      <StatusBadge status={issue.status} />
+                      <StatusBadge status={issue.status} noIcon={true} />
                     </td>
                     <td style={{ color: issue.assignedTo ? "var(--color-text)" : "var(--color-text-subtle)", fontSize: "13px" }}>
                       {issue.assignedTo ? (
