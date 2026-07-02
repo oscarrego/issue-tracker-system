@@ -118,7 +118,6 @@ const ViewsPage = () => {
             </svg>
           </div>
           <h2>No saved views yet.</h2>
-          
         </div>
       ) : (
         <div className="project-grid">
