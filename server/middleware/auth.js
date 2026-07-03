@@ -27,6 +27,10 @@ const protect = async (req, res, next) => {
         .json({ message: "Not authorized, user not found" });
     }
 
+    User.updateOne({ _id: req.user._id }, { $set: { lastActive: new Date() } }).catch((err) => {
+      console.error("Failed to update user activity:", err);
+    });
+
     next();
   } catch (error) {
     return res

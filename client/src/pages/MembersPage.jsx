@@ -7,9 +7,18 @@ import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import { useData } from "../context/DataContext";
 
+const ONLINE_WINDOW_MS = 45000;
+const MEMBERS_REFRESH_MS = 3000;
+
 const formatDate = (date) => {
   if (!date) return "-";
   return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+};
+
+const isMemberActive = (member, currentUser) => {
+  if (member._id === currentUser?.id) return true;
+  if (!member.lastActive) return false;
+  return Date.now() - new Date(member.lastActive).getTime() < ONLINE_WINDOW_MS;
 };
 
 const MembersPage = () => {
@@ -41,7 +50,21 @@ const MembersPage = () => {
 
   useEffect(() => {
     const timer = window.setTimeout(fetchMembers, 0);
-    return () => window.clearTimeout(timer);
+
+    const interval = setInterval(async () => {
+      try {
+        const { data } = await api.get("/users");
+        setMembers(data.users || []);
+        setCacheValue("members", data.users || []);
+      } catch (err) {
+        console.error("Background members refresh failed:", err);
+      }
+    }, MEMBERS_REFRESH_MS);
+
+    return () => {
+      window.clearTimeout(timer);
+      clearInterval(interval);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,6 +75,11 @@ const MembersPage = () => {
       `${member.name} ${member.email}`.toLowerCase().includes(term)
     );
   }, [members, search]);
+
+  const activeCount = useMemo(
+    () => filtered.filter((member) => isMemberActive(member, user)).length,
+    [filtered, user]
+  );
 
   const removeMember = async () => {
     if (!removeTarget || confirmText !== removeTarget.name) return;
@@ -112,7 +140,7 @@ const MembersPage = () => {
               <span>Joined</span>
               <span />
             </div>
-            <div className="members-section">Active {filtered.length}</div>
+            <div className="members-section">Active {activeCount}</div>
             {filtered.map((member) => (
               <div className="members-row" key={member._id}>
                 <div className="member-identity">
@@ -123,7 +151,13 @@ const MembersPage = () => {
                   </div>
                 </div>
                 <span>{member.email}</span>
-                <span><b className="online-dot" /> {member._id === user?.id ? "You" : "Member"}</span>
+                <span>
+                  <b
+                    className="online-dot"
+                    style={{ backgroundColor: isMemberActive(member, user) ? "#25c26e" : "#e53e3e" }}
+                  />
+                  {isMemberActive(member, user) ? "Active" : "Inactive"}
+                </span>
                 <span>{formatDate(member.createdAt)}</span>
                 <span className="member-actions">
                   {member._id !== user?.id && (

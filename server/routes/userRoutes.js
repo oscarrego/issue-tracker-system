@@ -23,7 +23,7 @@ const getTransport = () => {
 
 router.get("/", protect, async (req, res) => {
   try {
-    const users = await User.find().select("name email avatar createdAt").sort({ name: 1 });
+    const users = await User.find().select("name email avatar createdAt lastActive").sort({ name: 1 });
     res.json({ users });
   } catch (error) {
     console.error("Get users error:", error);
@@ -81,6 +81,27 @@ router.put("/me/name", protect, async (req, res) => {
   } catch (error) {
     console.error("Update name error:", error);
     res.status(500).json({ message: "Server error updating name" });
+  }
+});
+
+router.post("/me/offline", protect, async (req, res) => {
+  try {
+    await User.updateOne({ _id: req.user._id }, { $set: { lastActive: null } });
+    res.json({ message: "Offline status updated successfully" });
+  } catch (error) {
+    console.error("Set offline error:", error);
+    res.status(500).json({ message: "Server error setting offline status" });
+  }
+});
+
+router.post("/me/heartbeat", protect, async (req, res) => {
+  try {
+    const lastActive = new Date();
+    await User.updateOne({ _id: req.user._id }, { $set: { lastActive } });
+    res.json({ lastActive });
+  } catch (error) {
+    console.error("Heartbeat error:", error);
+    res.status(500).json({ message: "Server error updating online status" });
   }
 });
 

@@ -36,6 +36,7 @@ const register = async (req, res) => {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password,
+      lastActive: new Date(),
     });
 
     const token = generateToken(user._id);
@@ -84,6 +85,8 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(user._id);
+    user.lastActive = new Date();
+    await user.save();
 
     res.json({
       token,

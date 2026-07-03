@@ -1,8 +1,21 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import api from "../api/axios";
+import api, { BASE_URL } from "../api/axios";
 import { useData } from "./DataContext";
 
 const AuthContext = createContext(null);
+const HEARTBEAT_MS = 20000;
+
+const markOffline = (token) => {
+  if (!token) return;
+  fetch(`${BASE_URL}/users/me/offline`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    keepalive: true,
+  }).catch(() => {});
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -60,8 +73,35 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  useEffect(() => {
+    if (!token) return;
+
+    api.post("/users/me/heartbeat").catch((err) => {
+      console.error("Initial heartbeat failed:", err);
+    });
+
+    const heartbeat = window.setInterval(() => {
+      api.post("/users/me/heartbeat").catch((err) => {
+        console.error("Heartbeat failed:", err);
+      });
+    }, HEARTBEAT_MS);
+
+    const handleUnload = () => {
+      markOffline(token);
+    };
+
+    window.addEventListener("pagehide", handleUnload);
+    window.addEventListener("beforeunload", handleUnload);
+    return () => {
+      window.clearInterval(heartbeat);
+      window.removeEventListener("pagehide", handleUnload);
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, [token]);
+
   const { clearCache } = useData();
   const logout = () => {
+    markOffline(token);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setToken(null);
