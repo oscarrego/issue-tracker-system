@@ -5,9 +5,9 @@ import { useData } from "./DataContext";
 const AuthContext = createContext(null);
 const HEARTBEAT_MS = 20000;
 
-const markOffline = (token) => {
-  if (!token) return;
-  fetch(`${BASE_URL}/users/me/offline`, {
+const sendOfflineBeacon = (token) => {
+  if (!token) return Promise.resolve();
+  return fetch(`${BASE_URL}/users/me/offline`, {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -21,10 +21,19 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loading, setLoading] = useState(true);
+  const { clearCache } = useData();
 
   const persistUser = (nextUser) => {
     localStorage.setItem("user", JSON.stringify(nextUser));
     setUser(nextUser);
+  };
+
+  const clearSession = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken(null);
+    setUser(null);
+    clearCache();
   };
 
   useEffect(() => {
@@ -87,7 +96,7 @@ export const AuthProvider = ({ children }) => {
     }, HEARTBEAT_MS);
 
     const handleUnload = () => {
-      markOffline(token);
+      sendOfflineBeacon(token);
     };
 
     window.addEventListener("pagehide", handleUnload);
@@ -99,14 +108,32 @@ export const AuthProvider = ({ children }) => {
     };
   }, [token]);
 
-  const { clearCache } = useData();
-  const logout = () => {
-    markOffline(token);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
-    setUser(null);
-    clearCache();
+  useEffect(() => {
+    const syncLogout = (event) => {
+      if (event.key === "auth_logout_at") {
+        clearSession();
+      }
+    };
+
+    window.addEventListener("storage", syncLogout);
+    return () => window.removeEventListener("storage", syncLogout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const logout = async () => {
+    const activeToken = token || localStorage.getItem("token");
+
+    if (activeToken) {
+      try {
+        await api.post("/users/me/offline");
+      } catch (err) {
+        console.error("Logout offline update failed:", err);
+        await sendOfflineBeacon(activeToken);
+      }
+    }
+
+    localStorage.setItem("auth_logout_at", String(Date.now()));
+    clearSession();
   };
 
   return (
