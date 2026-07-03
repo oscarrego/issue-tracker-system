@@ -73,7 +73,14 @@ const MyIssuesPage = () => {
           <LoadingSpinner />
         ) : issues.length === 0 ? (
           <div className="quiet-state">
-            <div className="empty-illustration"><span /></div>
+            <div style={{ marginTop: "80px", marginBottom: "12px", display: "flex", justifyContent: "center" }}>
+              <svg width="96" height="96" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-accent)", opacity: 0.9 }}>
+                <circle cx="11" cy="11" r="10" />
+                <circle cx="11" cy="11" r="3" />
+                <line x1="11" y1="1" x2="11" y2="8" />
+                <line x1="11" y1="14" x2="11" y2="21" />
+              </svg>
+            </div>
             <h2>No issues {activeTab === "assigned" ? "assigned to you" : "created by you"}</h2>
             <Link className="btn btn-primary" to="/issues/new">Create new issue</Link>
           </div>
