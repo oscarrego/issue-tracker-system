@@ -112,7 +112,7 @@ const MembersPage = () => {
           </button>
         </div>
 
-        <div className="filters-bar">
+        <div className="filters-bar members-filters">
           <div className="filter-search wide">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="6.5" cy="6.5" r="5.5" />
@@ -124,6 +124,10 @@ const MembersPage = () => {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name or email"
             />
+          </div>
+          <div className="member-presence-summary">
+            <b className="online-dot" />
+            {activeCount} active
           </div>
         </div>
 
@@ -140,14 +144,12 @@ const MembersPage = () => {
               <span>Joined</span>
               <span />
             </div>
-            <div className="members-section">Active {activeCount}</div>
             {filtered.map((member) => (
               <div className="members-row" key={member._id}>
                 <div className="member-identity">
                   <Avatar user={member} />
                   <div>
                     <strong>{member.name}</strong>
-                    <small>{member.email.split("@")[0]}</small>
                   </div>
                 </div>
                 <span>{member.email}</span>

@@ -2504,6 +2504,24 @@ body {
   max-width: 420px;
 }
 
+.members-filters {
+  justify-content: space-between;
+}
+
+.member-presence-summary {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #303036;
+  border-radius: 6px;
+  background: #1b1b1f;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .members-panel {
   padding-top: 44px;
 }
@@ -2530,25 +2548,13 @@ body {
   border-bottom: 0;
 }
 
-.members-section {
-  height: 38px;
-  display: flex;
-  align-items: center;
-  padding: 0 68px;
-  border-radius: 8px;
-  background: #1a1a1d;
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
-
 .member-identity {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.member-identity strong,
-.member-identity small {
+.member-identity strong {
   display: block;
 }
 
