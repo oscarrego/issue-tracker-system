@@ -268,14 +268,14 @@ const Sidebar = () => {
                   Edit name
                 </button>
               )}
-              <button className="profile-menu-item" onClick={() => { setInviteOpen(true); setMenuOpen(false); }}>
-                {Icons.invite} Invite members
+              <button className="profile-menu-item" onClick={() => fileInputRef.current?.click()}>
+                {Icons.camera} Change profile photo
               </button>
               <button className="profile-menu-item" onClick={() => { navigate("/members"); setMenuOpen(false); }}>
                 {Icons.members} Manage members
               </button>
-              <button className="profile-menu-item" onClick={() => fileInputRef.current?.click()}>
-                {Icons.camera} Change profile photo
+              <button className="profile-menu-item" onClick={() => { setInviteOpen(true); setMenuOpen(false); }}>
+                {Icons.invite} Invite members
               </button>
               <button className="profile-menu-item logout" onClick={logout}>
                 {Icons.logout} Log out

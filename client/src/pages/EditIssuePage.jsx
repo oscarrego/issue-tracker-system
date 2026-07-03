@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { LABEL_OPTIONS, PRIORITIES, STATUSES } from "../utils/issueOptions";
+import LabelPicker from "../components/LabelPicker";
+import { PRIORITIES, STATUSES } from "../utils/issueOptions";
 import api from "../api/axios";
 import { useData } from "../context/DataContext";
 
@@ -90,12 +91,6 @@ const EditIssuePage = () => {
     setError("");
   };
 
-  const handleLabelsChange = (e) => {
-    const labels = Array.from(e.target.selectedOptions).map((option) => option.value);
-    setForm((prev) => ({ ...prev, labels }));
-    setError("");
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.title.trim()) {
@@ -169,7 +164,7 @@ const EditIssuePage = () => {
 
           <div className="form-group">
             <label className="form-label" htmlFor="description">
-              Description <span className="form-label-optional">(optional)</span>
+              Description
             </label>
             <textarea
               id="description"
@@ -216,7 +211,7 @@ const EditIssuePage = () => {
           <div className="form-grid two">
             <div className="form-group">
               <label className="form-label" htmlFor="assignedTo">
-                Assign to <span className="form-label-optional">(optional)</span>
+                Assign to
               </label>
               <select
                 id="assignedTo"
@@ -236,7 +231,7 @@ const EditIssuePage = () => {
 
             <div className="form-group">
               <label className="form-label" htmlFor="project">
-                Project <span className="form-label-optional">(optional)</span>
+                Project
               </label>
               <select
                 id="project"
@@ -258,7 +253,7 @@ const EditIssuePage = () => {
           <div className="form-grid two">
             <div className="form-group">
               <label className="form-label" htmlFor="dueDate">
-                Due date <span className="form-label-optional">(optional)</span>
+                Due date
               </label>
               <input
                 id="dueDate"
@@ -271,19 +266,16 @@ const EditIssuePage = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="labels">
-                Labels <span className="form-label-optional">(optional)</span>
+              <label className="form-label" style={{ marginBottom: "8px", display: "block" }}>
+                Labels
               </label>
-              <select
-                id="labels"
-                name="labels"
-                className="form-select multi-select"
-                value={form.labels}
-                multiple
-                onChange={handleLabelsChange}
-              >
-                {LABEL_OPTIONS.map((label) => <option key={label} value={label}>{label}</option>)}
-              </select>
+              <LabelPicker
+                selected={form.labels}
+                onChange={(labels) => {
+                  setForm((prev) => ({ ...prev, labels }));
+                  setError("");
+                }}
+              />
             </div>
           </div>
 
