@@ -1,4 +1,4 @@
-﻿# Issue Tracker System
+# Issue Tracker System
 
 ## Features
 
@@ -195,4 +195,56 @@ https://issue-tracker-system-2yc0.onrender.com
 
 ---
 
+## Screenshots
 
+### Authentication
+
+<p align="center">
+  <img src="assets/sign-in.png" width="48%">
+  <img src="assets/registration.png" width="48%">
+</p>
+
+### Dashboard
+
+<p align="center">
+  <img src="assets/dashboard.png" width="95%">
+</p>
+
+### Inbox & Issue Management
+
+<p align="center">
+  <img src="assets/inbox.png" width="32%">
+  <img src="assets/my_issues.png" width="32%">
+  <img src="assets/view-current-issue.png" width="32%">
+</p>
+
+### Create New Issue
+
+<p align="center">
+  <img src="assets/new_issue.png" width="95%">
+</p>
+
+### Projects
+
+<p align="center">
+  <img src="assets/project_view.png" width="48%">
+  <img src="assets/create_project.png" width="48%">
+</p>
+
+### Views
+
+<p align="center">
+  <img src="assets/create_view.png" width="95%">
+</p>
+
+### Customize Side Panel
+
+<p align="center">
+  <img src="assets/customize_panel.png" width="95%">
+</p>
+
+### Manage Members
+
+<p align="center">
+  <img src="assets/manage_members.png" width="95%">
+</p>
