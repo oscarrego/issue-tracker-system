@@ -200,8 +200,8 @@ https://issue-tracker-system-2yc0.onrender.com
 ### Authentication
 
 <p align="center">
-  <img src="assets/sign-in.png" width="48%">
-  <img src="assets/registration.png" width="48%">
+  <img src="assets/sign-in.png" width="95%">
+  <img src="assets/registration.png" width="95%">
 </p>
 
 ### Dashboard
@@ -213,9 +213,9 @@ https://issue-tracker-system-2yc0.onrender.com
 ### Inbox & Issue Management
 
 <p align="center">
-  <img src="assets/inbox.png" width="32%">
-  <img src="assets/my_issues.png" width="32%">
-  <img src="assets/view-current-issue.png" width="32%">
+  <img src="assets/inbox.png" width="95%">
+  <img src="assets/my_issues.png" width="95%">
+  <img src="assets/view-current-issue.png" width="95%">
 </p>
 
 ### Create New Issue
@@ -227,8 +227,8 @@ https://issue-tracker-system-2yc0.onrender.com
 ### Projects
 
 <p align="center">
-  <img src="assets/project_view.png" width="48%">
-  <img src="assets/create_project.png" width="48%">
+  <img src="assets/project_view.png" width="95%">
+  <img src="assets/create_project.png" width="95%">
 </p>
 
 ### Views
