@@ -1,4 +1,11 @@
-# Issue Tracker System
+### Live URL
+
+Frontend:
+https://issue-tracker-system-psi.vercel.app
+
+Backend:
+https://issue-tracker-system-2yc0.onrender.com
+--
 
 ## Features
 
@@ -185,13 +192,7 @@ The frontend runs at `http://localhost:5173` and the API at `http://localhost:50
 4. Add all server environment variables in the Render dashboard.
 5. Deploy. Render provides a public URL to use as `VITE_API_URL` on Vercel.
 
-### Live URL
 
-Frontend:
-https://issue-tracker-system-psi.vercel.app
-
-Backend:
-https://issue-tracker-system-2yc0.onrender.com
 
 ---
 
